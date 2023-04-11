@@ -1,0 +1,76 @@
+window.SWINBURNE = window.SWINBURNE || {};
+window.SWINBURNE.analytics = SWINBURNE.analytics || {};
+
+(function (ns, window, undefined) { //NOSONAR module conventions
+  'use strict';
+
+  const breakpoints = [
+    {label: 'XS', width: 320, height: 480},
+    {label: 'SM', width: 640, height: 480},
+    {label: 'MD', width: 1024, height: 768},
+    {label: 'LG', width: 1366, height: 1024},
+    {label: 'XLG', width: 1920, height: 1280},
+    {label: 'QHD', width: 2560, height: 1440},
+    {label: 'UHD', width: 3840, height: 2160},
+  ];
+
+  const sections = [
+    'header[component]',
+    'header[component] > div > [component]',
+    'aside[component]',
+    'aside[component] > div > [component]',
+    'article[component]',
+    'article[component] > div > [component]',
+    'footer[component]',
+    'footer[component] > div > [component]',
+  ];
+
+  ns.getBreakpoint = function () {
+    const windowWidth = window.innerWidth || window.document.documentElement.clientWidth || window.document.body.clientWidth;
+
+    const matches = breakpoints.filter(function (breakpoint) {
+      return breakpoint.width < windowWidth;
+    });
+
+    if (matches.length === 0) {
+      return breakpoints[0];
+    }
+
+    return matches[matches.length - 1];
+  };
+
+  ns.getDestinationUrl = function () {
+    return window.location.href.split('?')[0];
+  };
+
+  ns.getReferringUrl = function () {
+    try {
+      return window.document.referrer.split('?')[0] || '';
+    } catch (e) {
+      return '';
+    }
+  };
+
+  ns.getSections = function () {
+    const elements = document.querySelectorAll(sections.join(','));
+
+    return [].map.call(elements, function (element) {
+      return element.id;
+    }).join(',');
+  };
+
+  // Function to get the Analytics page type from the page URL
+  ns.getPageTypeFromURL = function () {
+    var output = "";
+
+    const path = window.location.pathname.toLowerCase().split('/');
+    if(path.length >= 2 && path[1] !== undefined && path[1].length) {
+      output = path[1];
+    } else {
+      output = 'home';
+    }
+
+    return output;
+  };
+
+})(window.SWINBURNE.analytics, this);
